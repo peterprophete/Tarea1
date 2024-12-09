@@ -17,7 +17,7 @@ pipeline {
         }
         stage('Build'){
             steps{
-                echo "Es python no hace falta hacer Build"
+                echo ""
             }
         }
         stage('Tests'){
