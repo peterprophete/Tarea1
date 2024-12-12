@@ -49,9 +49,14 @@ pipeline {
                                     echo "Directory test/unit does not exist"
                                     exit 1
                                 fi
-                                export FLASK_APP=app/api.py 
+                                export FLASK_APP=app/api.py
                                 flask run &
                                 java -jar /usr/local/bin/wiremock.jar --port 9090 --verbose --root-dir test/wiremock &
+                                until curl --silent --max-time 10 http://localhost:9090 > /dev/null; do
+                                    echo "Esperando a que WireMock esté listo..."
+                                    sleep 2
+                                done
+                                echo "WireMock está listo, comenzando las pruebas"
                                 pytest --junitxml=../result-rest.xml test/rest
                             '''
                         }
