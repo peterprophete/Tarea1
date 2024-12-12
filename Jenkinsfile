@@ -5,11 +5,10 @@ pipeline {
         stage('Perform Preparation') {
             steps {
                 script {
-                    echo "Cleaning workspace"
-                    deleteDir()
+
                     echo "Get Code"
                     sh '''
-                        git clone https://github.com/manulis/helloworld.git
+                        git clone https://github.com/manulis/unir-cp1.git
                         ls
                     '''
                 }
@@ -18,7 +17,7 @@ pipeline {
         stage('Build'){
             steps{
                  echo 'This is python no build needed'
-                echo "ls -la helloworld"
+                echo "ls -la unir-cp1"
             }
         }
         stage('Tests'){
@@ -28,7 +27,7 @@ pipeline {
                             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                                 sh '''
                                     set -e
-                                    cd helloworld
+                                    cd unir-cp1
                                     if [ ! -d "test/unit" ]; then
                                         echo "Directory test/unit does not exist"
                                         exit 1
@@ -44,7 +43,7 @@ pipeline {
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                             sh '''
                                 set -e
-                                cd helloworld
+                                cd unir-cp1
                                 if [ ! -d "test/unit" ]; then
                                     echo "Directory test/unit does not exist"
                                     exit 1
@@ -68,6 +67,8 @@ pipeline {
         stage('Result') {
             steps {
                 junit "result*.xml"
+                echo "Cleaning workspace"
+                deleteDir()
             }
         }
     }
