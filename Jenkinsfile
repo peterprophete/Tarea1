@@ -17,7 +17,8 @@ pipeline {
         }
         stage('Build'){
             steps{
-                echo ""
+                 echo 'This is python no build needed'
+                echo "ls -la helloworld"
             }
         }
         stage('Tests'){
@@ -50,6 +51,7 @@ pipeline {
                                 fi
                                 export FLASK_APP=app/api.py 
                                 flask run &
+                                java -jar /usr/local/bin/wiremock.jar --port 9090 --verbose --root-dir test/wiremock &
                                 pytest --junitxml=../result-rest.xml test/rest
                             '''
                         }
