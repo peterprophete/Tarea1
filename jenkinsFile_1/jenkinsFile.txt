@@ -1,0 +1,90 @@
+pipeline { 
+    agent any 
+
+    environment {
+        WIREMOCK_PORT = '9090'  // Puerto en el que se levantará WireMock
+        WIREMOCK_JAR = 'wiremock-standalone-3.10.0.jar'  // Versión de WireMock que se usará
+       WIREMOCK_DIR = 'C:\\Users\\amaro\\Documents\\Giovanna\\helloworld\\test' 
+    }
+
+    stages { 
+
+        stage('GetCode') { 
+            steps { 
+                git 'https://github.com/GiovannaLeon/helloworld.git'
+            } 
+        }
+
+       
+        stage('Start WireMock') {
+            steps {
+                script {
+                    // Levantar WireMock en segundo plano
+                    echo 'Levantando WireMock...'
+                    bat '''
+                        start java -jar "%WIREMOCK_DIR%\\%WIREMOCK_JAR%" --port %WIREMOCK_PORT%
+                    '''
+                    sleep(5) // Esperar 5 segundos para asegurar que WireMock esté corriendo
+                }
+            }
+        }
+
+        stage('Build') { 
+            steps { 
+                echo 'No hay que hacer nada. Esto es Python' 
+                bat "dir"   
+            } 
+        }
+
+        stage('Tests'){ 
+            parallel { 
+
+                stage('Unit') { 
+                    steps { 
+                        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') { 
+                            // Establece PYTHONPATH y asegúrate de que pytest se ejecute correctamente
+                            bat '''
+                                set PYTHONPATH=%WORKSPACE%
+                                C:\\Users\\amaro\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -m pytest --junitxml=result-unit.xml test\\unit
+                               echo 'python...'
+                            ''' 
+                        } 
+                    } 
+                }
+
+                stage('Rest') { 
+                    steps { 
+                        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') { 
+                            // Ejecutando las pruebas REST, asegurándose de que Flask esté corriendo
+                            bat '''
+                                set FLASK_APP=app\\api.py
+                                start /B C:\\Users\\amaro\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -m flask run --host=0.0.0.0 --port=5000
+                                set PYTHONPATH=%WORKSPACE%
+                                start C:\\Users\\amaro\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -m pytest --junitxml=result-rest.xml C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\PROYECTOS\\test1\\test\\rest
+                                echo 'Flask...'
+                            ''' 
+                        } 
+                    } 
+                }
+            } 
+        }
+
+        stage('Stop WireMock') {
+            steps {
+                script {
+                    // Detener el proceso de WireMock
+                    echo 'Deteniendo WireMock...'
+                    bat '''
+                        taskkill /F /IM java.exe
+                    '''
+                }
+            }
+        }
+
+        stage('Results') { 
+            steps { 
+               junit 'result*.xml'  // Buscar archivos en cualquier subdirectorio
+            } 
+        }
+    } 
+}
