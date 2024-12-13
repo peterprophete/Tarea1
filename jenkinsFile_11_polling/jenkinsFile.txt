@@ -1,0 +1,102 @@
+pipeline {
+    agent any  // Usamos cualquier agente disponible
+
+    environment {
+        WIREMOCK_PORT = '9090'  // Puerto en el que se levantará WireMock
+        WIREMOCK_JAR = 'wiremock-standalone-3.10.0.jar'  // Versión de WireMock que se usará
+        WIREMOCK_DIR = 'C:\\Users\\amaro\\Documents\\Giovanna\\helloworld\\test'  // Directorio de WireMock
+    }
+
+    triggers {
+        // Configurar el polling para que detecte cambios en el repositorio cada 5 minutos
+        pollSCM('H/5 * * * *')
+    }
+
+    stages {
+        stage('GetCode') {
+            steps {
+                // Obtener el código del repositorio GitHub que contiene el Jenkinsfile
+                git 'https://github.com/GiovannaLeon/helloworld.git'
+            }
+        }
+
+        stage('Start WireMock') {
+            steps {
+                script {
+                    echo 'Levantando WireMock...'
+                    bat '''
+                        start java -jar "%WIREMOCK_DIR%\\%WIREMOCK_JAR%" --port %WIREMOCK_PORT%
+                    '''
+                    sleep(5) // Esperar 5 segundos para asegurar que WireMock esté corriendo
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'No hay que hacer nada. Esto es Python'
+                bat "dir"  // Muestra el directorio actual para verificar los archivos
+            }
+        }
+
+        stage('Tests') {
+            parallel {
+                stage('Unit') {
+                    steps {
+                        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                            // Ejecutar las pruebas unitarias con pytest
+                            bat '''
+                                set PYTHONPATH=%WORKSPACE%
+                                C:\\Users\\amaro\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -m pytest --junitxml=result-unit.xml test\\unit
+                                echo 'Pruebas unitarias completadas'
+                            '''
+                        }
+                    }
+                }
+
+                stage('Rest') {
+                    steps {
+                        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                            // Ejecutar las pruebas REST, asegurándose de que Flask esté corriendo
+                            bat '''
+                                set FLASK_APP=app\\api.py
+                                start /B C:\\Users\\amaro\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -m flask run --host=0.0.0.0 --port=5000
+                                set PYTHONPATH=%WORKSPACE%
+                                start C:\\Users\\amaro\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -m pytest --junitxml=result-rest.xml C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\PROYECTOS\\test1\\test\\rest
+                                echo 'Pruebas REST completadas'
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Stop WireMock') {
+            steps {
+                script {
+                    // Detener el proceso de WireMock
+                    echo 'Deteniendo WireMock...'
+                    bat '''
+                        taskkill /F /IM java.exe
+                    '''
+                }
+            }
+        }
+
+      stage('Results') {
+            agent { label 'master' }  // Usamos el agente principal para recoger los resultados
+            steps {
+                junit 'result*.xml'  // Buscar archivos de resultados en cualquier subdirectorio
+            }
+        }
+         
+         stage('Clean Workspace') {
+            agent { label 'master' }  // Usamos el agente principal para recoger los resultados
+            steps {
+                script {
+                    deleteDir() // Elimina todo el contenido del workspace
+                }
+            }
+        }   
+    }
+}        
