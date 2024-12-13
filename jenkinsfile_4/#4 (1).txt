@@ -1,0 +1,241 @@
+Lanzada por el usuario Giovanna leon
+[Pipeline] Start of Pipeline
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (GetCode)
+[Pipeline] node
+Running on agent3 in /home/agent3/jenkins/workspace/PROYECTOS/test4
+[Pipeline] {
+[Pipeline] git
+The recommended git tool is: NONE
+No credentials specified
+Fetching changes from the remote Git repository
+ > git.exe rev-parse --resolve-git-dir C:\home\agent3\jenkins\workspace\PROYECTOS\test4\.git # timeout=10
+ > git.exe config remote.origin.url https://github.com/GiovannaLeon/helloworld.git # timeout=10
+Fetching upstream changes from https://github.com/GiovannaLeon/helloworld.git
+ > git.exe --version # timeout=10
+ > git --version # 'git version 2.47.1.windows.1'
+ > git.exe fetch --tags --force --progress -- https://github.com/GiovannaLeon/helloworld.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+Checking out Revision e6f80f4d88c36887db44a6bc7a2cea0cc0923af3 (refs/remotes/origin/develop)
+ > git.exe rev-parse "refs/remotes/origin/develop^{commit}" # timeout=10
+ > git.exe config core.sparsecheckout # timeout=10
+Commit message: "añado test para multiplicar y dividir"
+First time build. Skipping changelog.
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build)
+[Pipeline] node
+Running on agent3 in /home/agent3/jenkins/workspace/PROYECTOS/test4
+[Pipeline] {
+[Pipeline] echo
+No hay que hacer nada. Esto es Python
+[Pipeline] bat
+ > git.exe checkout -f e6f80f4d88c36887db44a6bc7a2cea0cc0923af3 # timeout=10
+ > git.exe branch -a -v --no-abbrev # timeout=10
+ > git.exe branch -D develop # timeout=10
+ > git.exe checkout -b develop e6f80f4d88c36887db44a6bc7a2cea0cc0923af3 # timeout=10
+
+C:\home\agent3\jenkins\workspace\PROYECTOS\test4>dir
+ El volumen de la unidad C es Windows
+ El n£mero de serie del volumen es: 6475-04AA
+
+ Directorio de C:\home\agent3\jenkins\workspace\PROYECTOS\test4
+
+13/12/2024  11:26    <DIR>          .
+13/12/2024  11:38    <DIR>          ..
+13/12/2024  11:26                40 .gitignore
+13/12/2024  11:26    <DIR>          .pytest_cache
+13/12/2024  11:26    <DIR>          app
+13/12/2024  11:26               175 pytest.ini
+13/12/2024  11:26               418 README.md
+13/12/2024  11:26             1.401 result-unit.xml
+13/12/2024  11:26    <DIR>          test
+               4 archivos          2.034 bytes
+               5 dirs  598.784.864.256 bytes libres
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Tests)
+[Pipeline] parallel
+[Pipeline] { (Branch: Unit)
+[Pipeline] { (Branch: Integration)
+[Pipeline] stage
+[Pipeline] { (Unit)
+[Pipeline] stage
+[Pipeline] { (Integration)
+[Pipeline] node
+Running on agente3_2 in /home/agent3/jenkins/workspace/PROYECTOS/test4
+[Pipeline] node
+[Pipeline] {
+[Pipeline] catchError
+[Pipeline] {
+[Pipeline] bat
+
+C:\home\agent3\jenkins\workspace\PROYECTOS\test4>set PYTHONPATH=/home/agent3/jenkins/workspace/PROYECTOS/test4 
+
+C:\home\agent3\jenkins\workspace\PROYECTOS\test4>C:\Users\amaro\AppData\Local\Programs\Python\Python313\python.exe -m pytest --junitxml=result-unit.xml test\unit 
+============================= test session starts =============================
+platform win32 -- Python 3.13.0, pytest-8.3.4, pluggy-1.5.0
+rootdir: C:\home\agent3\jenkins\workspace\PROYECTOS\test4
+configfile: pytest.ini
+collected 10 items
+
+test\unit\calc_test.py ........                                          [ 80%]
+test\unit\util_test.py ..                                                [100%]
+
+- generated xml file: C:\home\agent3\jenkins\workspace\PROYECTOS\test4\result-unit.xml -
+============================= 10 passed in 0.18s ==============================
+
+C:\home\agent3\jenkins\workspace\PROYECTOS\test4>echo 'python...' 
+'python...'
+[Pipeline] }
+[Pipeline] // catchError
+[Pipeline] }
+Running on agente3_2 in /home/agent3/jenkins/workspace/PROYECTOS/test4
+[Pipeline] // node
+[Pipeline] }
+[Pipeline] {
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] catchError
+[Pipeline] {
+[Pipeline] script
+[Pipeline] {
+[Pipeline] echo
+Levantando WireMock para pruebas de integración...
+[Pipeline] bat
+
+C:\home\agent3\jenkins\workspace\PROYECTOS\test4>start java -jar "C:\Users\amaro\Documents\Giovanna\helloworld\test\wiremock-standalone-3.10.0.jar" --port 9090 
+
+C:\home\agent3\jenkins\workspace\PROYECTOS\test4>timeout /t 5 /nobreak  // Esperar 5 segundos para asegurar que WireMock estÃ© corriendo 
+ERROR: Sintaxis no v lida. La opci¢n predeterminada no est  permitida m s
+de "1" veces.
+Escriba "TIMEOUT /?" para su uso.
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+ERROR: script returned exit code 1
+Setting overall build result to UNSTABLE
+[Pipeline] // catchError
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // parallel
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Stop WireMock)
+[Pipeline] node
+Running on agente3_1 in /home/agent3/jenkins/workspace/PROYECTOS/test4
+[Pipeline] {
+[Pipeline] script
+[Pipeline] {
+[Pipeline] echo
+Deteniendo WireMock...
+[Pipeline] bat
+
+C:\home\agent3\jenkins\workspace\PROYECTOS\test4>taskkill /F /IM java.exe 
+Cannot contact agente3_1: hudson.remoting.ChannelClosedException: Channel "hudson.remoting.Channel@3e5b917c:agente3_1": Remote call on agente3_1 failed. The channel is closing down or has closed down
+ERROR: no se pudo terminar el proceso "java.exe" con PID 30460.
+Motivo: Acceso denegado.
+Correcto: se termin¢ el proceso "java.exe" con PID 22748.
+Correcto: se termin¢ el proceso "java.exe" con PID 15572.
+Correcto: se termin¢ el proceso "java.exe" con PID 35364.
+Correcto: se termin¢ el proceso "java.exe" con PID 30084.
+Correcto: se termin¢ el proceso "java.exe" con PID 21716.
+Correcto: se termin¢ el proceso "java.exe" con PID 17492.
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Results)
+[Pipeline] node
+Running on agent3 in /home/agent3/jenkins/workspace/PROYECTOS/test4
+[Pipeline] {
+[Pipeline] junit
+Grabando resultados de tests
+[Checks API] No suitable checks publisher found.
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Clean Workspace)
+[Pipeline] node
+Running on agent3 in /home/agent3/jenkins/workspace/PROYECTOS/test4
+[Pipeline] {
+[Pipeline] script
+[Pipeline] {
+[Pipeline] deleteDir
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] End of Pipeline
+Also:   	Also:   hudson.remoting.ProxyException: java.nio.file.FileSystemException: \home\agent3\jenkins\workspace\PROYECTOS\test4: El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso
+			at java.base/sun.nio.fs.WindowsException.translateToIOException(WindowsException.java:92)
+			at java.base/sun.nio.fs.WindowsException.rethrowAsIOException(WindowsException.java:103)
+			at java.base/sun.nio.fs.WindowsException.rethrowAsIOException(WindowsException.java:108)
+			at java.base/sun.nio.fs.WindowsFileSystemProvider.implDelete(WindowsFileSystemProvider.java:275)
+			at java.base/sun.nio.fs.AbstractFileSystemProvider.deleteIfExists(AbstractFileSystemProvider.java:110)
+			at java.base/java.nio.file.Files.deleteIfExists(Files.java:1191)
+			at Jenkins v2.479.2//jenkins.util.io.PathRemover.removeOrMakeRemovableThenRemove(PathRemover.java:234)
+	Also:   hudson.remoting.ProxyException: java.nio.file.FileSystemException: \home\agent3\jenkins\workspace\PROYECTOS\test4: El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso
+			at java.base/sun.nio.fs.WindowsException.translateToIOException(WindowsException.java:92)
+			at java.base/sun.nio.fs.WindowsException.rethrowAsIOException(WindowsException.java:103)
+			at java.base/sun.nio.fs.WindowsException.rethrowAsIOException(WindowsException.java:108)
+			at java.base/sun.nio.fs.WindowsFileSystemProvider.implDelete(WindowsFileSystemProvider.java:275)
+			at java.base/sun.nio.fs.AbstractFileSystemProvider.deleteIfExists(AbstractFileSystemProvider.java:110)
+			at java.base/java.nio.file.Files.deleteIfExists(Files.java:1191)
+			at Jenkins v2.479.2//jenkins.util.io.PathRemover.removeOrMakeRemovableThenRemove(PathRemover.java:238)
+hudson.remoting.ProxyException: jenkins.util.io.CompositeIOException: Unable to remove directory \home\agent3\jenkins\workspace\PROYECTOS\test4 with directory contents: []
+		at Jenkins v2.479.2//jenkins.util.io.PathRemover.removeOrMakeRemovableThenRemove(PathRemover.java:247)
+		at Jenkins v2.479.2//jenkins.util.io.PathRemover.tryRemoveFile(PathRemover.java:202)
+		at Jenkins v2.479.2//jenkins.util.io.PathRemover.tryRemoveRecursive(PathRemover.java:213)
+		at Jenkins v2.479.2//jenkins.util.io.PathRemover.forceRemoveRecursive(PathRemover.java:93)
+Also:   hudson.remoting.ProxyException: hudson.remoting.Channel$CallSiteStackTrace: Remote call to agent3
+		at hudson.remoting.Channel.attachCallSiteStackTrace(Channel.java:1923)
+		at hudson.remoting.UserRequest$ExceptionResponse.retrieve(UserRequest.java:384)
+		at hudson.remoting.Channel.call(Channel.java:1112)
+		at hudson.FilePath.act(FilePath.java:1228)
+		at hudson.FilePath.act(FilePath.java:1217)
+		at hudson.FilePath.deleteRecursive(FilePath.java:1470)
+		at PluginClassLoader for workflow-basic-steps//org.jenkinsci.plugins.workflow.steps.DeleteDirStep$Execution.run(DeleteDirStep.java:79)
+		at PluginClassLoader for workflow-basic-steps//org.jenkinsci.plugins.workflow.steps.DeleteDirStep$Execution.run(DeleteDirStep.java:71)
+		at PluginClassLoader for workflow-step-api//org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution.lambda$start$0(SynchronousNonBlockingStepExecution.java:47)
+		at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+		at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+		at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+		at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+Also:   hudson.remoting.ProxyException: org.jenkinsci.plugins.workflow.actions.ErrorAction$ErrorId: 6f77d607-fc8f-4e77-a1f4-ff6ae24dff3c
+hudson.remoting.ProxyException: jenkins.util.io.CompositeIOException: Unable to delete '\home\agent3\jenkins\workspace\PROYECTOS\test4'. Tried 3 times (of a maximum of 3) waiting 0,1 Seg between attempts.
+	at Jenkins v2.479.2//jenkins.util.io.PathRemover.forceRemoveRecursive(PathRemover.java:96)
+	at Jenkins v2.479.2//hudson.Util.deleteRecursive(Util.java:334)
+	at Jenkins v2.479.2//hudson.FilePath$DeleteRecursive.invoke(FilePath.java:1478)
+	at Jenkins v2.479.2//hudson.FilePath$DeleteRecursive.invoke(FilePath.java:1473)
+	at Jenkins v2.479.2//hudson.FilePath$FileCallableWrapper.call(FilePath.java:3614)
+	at hudson.remoting.UserRequest.perform(UserRequest.java:225)
+	at hudson.remoting.UserRequest.perform(UserRequest.java:50)
+	at hudson.remoting.Request$2.run(Request.java:391)
+	at hudson.remoting.InterceptingExecutorService.lambda$wrap$0(InterceptingExecutorService.java:81)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at hudson.remoting.Engine$1.lambda$newThread$0(Engine.java:140)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+Finished: FAILURE
