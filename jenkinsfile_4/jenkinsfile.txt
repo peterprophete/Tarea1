@@ -64,14 +64,6 @@ pipeline {
             steps {
                 junit 'result*.xml'
             }
-        }
-        stage('Clean Workspace') {
-            agent { label 'master' }  // Usamos el agente principal para recoger los resultados
-            steps {
-                script {
-                    deleteDir() // Elimina todo el contenido del workspace
-                }
-            }
         }   
     }
 }
