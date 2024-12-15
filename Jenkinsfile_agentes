@@ -12,11 +12,6 @@ pipeline {
                         hostname
                         echo ${WORKSPACE}
                     '''
-                    echo "Get Code"
-                    sh '''
-                        git clone https://github.com/manulis/unir-cp1.git
-                        ls -la
-                    '''
                     stash includes: '**', name: 'workspace-root'
                 }
             }
