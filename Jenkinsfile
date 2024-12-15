@@ -16,7 +16,6 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'This is python no build needed'
-                echo "ls -la unir-cp1"
             }
         }
         stage('Tests') {
