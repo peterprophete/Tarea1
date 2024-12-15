@@ -32,7 +32,7 @@ pipeline {
                                     exit 1
                                 fi
                                 export PYTHONPATH=.
-                                pytest --junitxml=../result-unit.xml test/unit
+                                pytest --junitxml=result-unit.xml test/unit
                             '''
                         }
                     }
@@ -66,7 +66,7 @@ pipeline {
                                 done
                                 
                                 echo "WireMock está listo, comenzando las pruebas"
-                                pytest --junitxml=../result-rest.xml test/rest
+                                pytest --junitxml=result-rest.xml test/rest
                             '''
                         }
                     }
