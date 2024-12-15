@@ -26,7 +26,6 @@ pipeline {
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                             sh '''
                                 set -e
-                                cd unir-cp1
                                 if [ ! -d "test/unit" ]; then
                                     echo "Directory test/unit does not exist"
                                     exit 1
@@ -42,24 +41,20 @@ pipeline {
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                             sh '''
                                 set -e
-                                cd unir-cp1
                                 if [ ! -d "test/unit" ]; then
                                     echo "Directory test/unit does not exist"
                                     exit 1
                                 fi
                                 
-                                # Verificar si el puerto 9090 está en uso y esperar a que esté libre
                                 while lsof -i:9090 > /dev/null; do
                                     echo "Esperando a que el puerto 9090 esté libre..."
                                     sleep 2
                                 done
                                 
-                                # Iniciar Flask y WireMock
                                 export FLASK_APP=app/api.py
                                 flask run &
                                 java -jar /usr/local/bin/wiremock.jar --port 9090 --verbose --root-dir test/wiremock &
                                 
-                                # Esperar a que WireMock esté listo
                                 until curl --silent --max-time 10 http://localhost:9090 > /dev/null; do
                                     echo "Esperando a que WireMock esté listo..."
                                     sleep 2
