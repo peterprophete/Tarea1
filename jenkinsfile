@@ -41,7 +41,7 @@ pipeline {
                               set FLASK_APP=app\\api.py
                               set PYTHONPATH=%WORKSPACE%
                               start python -m flask run
-                              start java -jar %WORKSPACE%\\test\\wiremock\\wiremock-standalone-3.10.0.jar" --port 9090 --root-dir %WORKSPACE%\\test\\wiremock\\
+                              start java -jar %WORKSPACE%\\test\\wiremock\\wiremock-standalone-3.10.0.jar" --port 9090 --root-dir %WORKSPACE%\\test\\wiremock\\mappings\\
                               python -m pytest --junitxml=result-rest.xml test\\rest
                             '''
                         }
