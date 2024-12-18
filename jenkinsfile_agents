@@ -39,6 +39,9 @@ pipeline {
                     }
                     steps {
                         unstash 'source_code'
+                        bat 'whoami'
+                        echo "Workspace: ${env.WORKSPACE}"
+                        bat 'hostname'
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                             bat '''
                                 where python
@@ -56,6 +59,9 @@ pipeline {
                     }
                     steps {
                         unstash 'source_code'
+                        bat 'whoami'
+                        echo "Workspace: ${env.WORKSPACE}"
+                        bat 'hostname'
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                             bat '''
                                 set FLASK_APP=app\\api.py
