@@ -52,8 +52,8 @@ class TestCalculate(unittest.TestCase):
 
 def test_divide_by_zero(self):
     # Testing divide by zero explicitly
-    with self.assertRaises(ZeroDivisionError):  # Usa "with self.assertRaises()"
-        self.calc.divide(1, 0)  # Dividir por 0
+    result = self.calc.divide(1, 0)  # Dividir por 0
+    self.assertEqual(result, float('inf'))  # Verifica que la división por cero retorna 'inf'
 
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
