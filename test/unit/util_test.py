@@ -20,8 +20,8 @@ class TestUtil(unittest.TestCase):
         self.assertAlmostEqual(-1.0, util.convert_to_number("-1.0"), delta=0.0000001)
 
         # Casos con notación científica
-        self.assertAlmostEqual(1e2, util.convert_to_number("1e2"), delta=0.0000001)  # 100
-        self.assertAlmostEqual(1e-2, util.convert_to_number("1e-2"), delta=0.0000001)  # 0.01
+        self.assertAlmostEqual(100.0, util.convert_to_number("1e2"), delta=0.0000001)  # 100
+        self.assertAlmostEqual(0.01, util.convert_to_number("1e-2"), delta=0.0000001)  # 0.01
 
         # Casos con espacios alrededor del número
         self.assertEqual(10, util.convert_to_number("  10  "))
