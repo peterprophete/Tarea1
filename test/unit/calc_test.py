@@ -50,10 +50,11 @@ class TestCalculate(unittest.TestCase):
         self.assertEqual(0, self.calc.substract(0, 0))
         self.assertRaises(TypeError, self.calc.substract, "0", 0)
 
-def test_divide_by_zero(self):
-    # Testing divide by zero explicitly
-    result = self.calc.divide(1, 0)  # Dividir por 0
-    self.assertEqual(result, float('inf'))  # Verifica que la división por cero retorna 'inf'
+def divide(self, x, y):
+    self.check_types(x, y)
+    if y == 0:
+        return float('inf')  # O el valor que prefieras (None, 0, etc.)
+    return x / y
 
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
