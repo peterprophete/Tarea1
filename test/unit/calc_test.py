@@ -6,16 +6,7 @@ from app.calc import Calculator
 class TestCalculate(unittest.TestCase):
     def setUp(self):
         self.calc = Calculator()
-        
-    def divide(self, x, y):
-        self.check_types(x, y)
-        
-        # Manejar la división por cero
-        if y == 0:
-            raise ZeroDivisionError("Division by zero is not possible")
-        
-        # Realizar la división si todo es válido
-        return x / y
+ 
 
     def test_add_method_returns_correct_result(self):
         self.assertEqual(4, self.calc.add(2, 2))
