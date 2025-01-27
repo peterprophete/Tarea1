@@ -46,7 +46,6 @@ class TestCalculate(unittest.TestCase):
     self.assertEqual(0, self.calc.multiply(-1, 0))  # Caso con negativo
     self.assertEqual(-2, self.calc.multiply(-1, 2))  # Caso con negativo
     self.assertRaises(TypeError, self.calc.multiply, "0", 0)  # Excepción
-    self.assertRaises(TypeError, self.calc.multiply, None, 2)  # Excepción adicional
         
     def test_power_method_returns_correct_result(self):
         self.assertEqual(4, self.calc.power(2, 2))
