@@ -29,7 +29,8 @@ class TestCalculate(unittest.TestCase):
         self.assertRaises(TypeError, self.calc.divide, "2", 2)
         self.assertRaises(TypeError, self.calc.divide, 2, "2")
         self.assertRaises(TypeError, self.calc.divide, "2", "2")
-        self.assertRaises(ZeroDivisionError, self.calc.divide, 1, 0)  # División por cero
+          with self.assertRaises(ZeroDivisionError):
+            self.calc.divide(1, 0)  # Expected to raise ZeroDivisionError
 
 
     def test_multiply_method_returns_correct_result(self):
