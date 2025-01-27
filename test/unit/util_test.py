@@ -1,8 +1,6 @@
 import unittest
 import pytest
-
 from app import util
-
 
 @pytest.mark.unit
 class TestUtil(unittest.TestCase):
@@ -22,6 +20,10 @@ class TestUtil(unittest.TestCase):
         self.assertRaises(TypeError, util.convert_to_number, "s")
         self.assertRaises(TypeError, util.convert_to_number, None)
         self.assertRaises(TypeError, util.convert_to_number, object())
+
+    def test_additional_test_case(self):
+        # Agregar un caso adicional que podría no estar cubierto
+        self.assertRaises(TypeError, util.convert_to_number, object())  # Convertir objeto debería fallar
 
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
