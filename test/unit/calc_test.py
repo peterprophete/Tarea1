@@ -50,11 +50,5 @@ class TestCalculate(unittest.TestCase):
         self.assertEqual(0, self.calc.substract(0, 0))
         self.assertRaises(TypeError, self.calc.substract, "0", 0)
 
-def divide(self, x, y):
-    self.check_types(x, y)
-    if y == 0:
-        return float('inf')  # O el valor que prefieras (None, 0, etc.)
-    return x / y
-
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
