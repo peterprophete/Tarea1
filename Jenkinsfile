@@ -70,9 +70,6 @@ pipeline {
                     }
                 }
             }
-            steps{
-                junit "result*.xml"
-            }
         }
                 
         stage('Coverage') {
