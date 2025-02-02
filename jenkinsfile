@@ -2,14 +2,14 @@ pipeline {
     agent any
 
     environment {
-        FLASK_PORT = '5000'
+        FLASK_PORT = '5001'
         WIREMOCK_PORT = '9090'
     }
 
     stages {
         stage('GetCode') {
             steps {
-                git 'https://github.com/escribano89/helloworld'
+                git branch: 'feature_fix_racecond', url: 'https://github.com/escribano89/helloworld'
             }
         }
 
