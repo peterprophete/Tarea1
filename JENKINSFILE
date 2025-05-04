@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Get Code') {
+            steps {
+                echo 'Me voy a traer el codigo'
+                // Obtener código del repo
+                git 'https://github.com/DaniDiLara/helloworld.git'
+                bat 'dir'
+                echo WORKSPACE
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'NO HAY QUE COMPILAR NADA. ESTO ES PYTHON'
+            }
+        }
+
+        stage('Tests') {
+            parallel {
+                stage('Unit') {
+                    steps {
+                        bat '''
+                            set PYTHONPATH=%WORKSPACE%
+                            pytest --junitxml=result-unit.xml test\\unit
+                        '''
+                    }
+                }
+                
+                stage('Rest') {
+                    steps {
+                        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                            bat '''
+                                set FLASK_APP=app\\api.py
+                                set FLASK_ENV=development
+                                start flask run
+                                start java -jar C:\\Users\\DaniL\\OneDrive\\Escritorio\\Curso\\Repositorios\\helloworld\\test\\wiremock\\wiremock-jre8-standalone-2.28.0.jar --port 9090 --root-dir C:\\Users\\DaniL\\OneDrive\\Escritorio\\Curso\\Repositorios\\helloworld\\test\\wiremock
+                                set PYTHONPATH=%WORKSPACE%
+                                pytest --junitxml=result-rest.xml test\\rest
+                            '''
+                        }
+                    }
+                }    
+            }
+        }
+        
+        stage ('Results') {
+            steps {
+                junit 'result*.xml'
+            }
+        }
+    }
+}
